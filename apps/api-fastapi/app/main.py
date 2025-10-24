@@ -9,7 +9,11 @@ app = FastAPI(title="Confessions API", version="0.1.0")
 # CORS for local Next.js dev and any future domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten later with env-configured origins
+    allow_origins=[
+        "http://localhost:3000",              # Local development
+        "https://your-vercel-app.vercel.app", # Your Vercel domain
+        "https://*.vercel.app",               # All Vercel preview URLs
+    ]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
