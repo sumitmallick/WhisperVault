@@ -51,6 +51,12 @@ apps/web-next/pnpm-lock.yaml
 apps/web-next/yarn.lock
 apps/web-next/package-lock.json
 
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate*
+**/terraform.tfvars
+
 # In your root .gitignore, replace the current content with:
 # Dependencies
 **/node_modules/
