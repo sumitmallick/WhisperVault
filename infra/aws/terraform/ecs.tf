@@ -117,7 +117,7 @@ resource "aws_ecs_task_definition" "api" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = "postgresql://${aws_db_instance.main.username}:${random_password.db_password.result}@${aws_db_instance.main.endpoint}/${aws_db_instance.main.db_name}"
+          value = "postgresql+asyncpg://${aws_db_instance.main.username}:${random_password.db_password.result}@${aws_db_instance.main.endpoint}/${aws_db_instance.main.db_name}"
         },
         {
           name  = "REDIS_URL"
@@ -231,7 +231,12 @@ resource "aws_ecs_service" "api" {
     container_port   = 8000
   }
 
-  depends_on = [aws_lb_listener.api]
+  depends_on = [
+    aws_lb_listener.https,
+    aws_lb_listener.http_main,
+    aws_lb_listener_rule.api_https,
+    aws_lb_listener_rule.api_http
+  ]
 
   tags = {
     Name = "${var.app_name}-api-service"
@@ -258,7 +263,10 @@ resource "aws_ecs_service" "web" {
     container_port   = 3000
   }
 
-  depends_on = [aws_lb_listener.web]
+  depends_on = [
+    aws_lb_listener.https,
+    aws_lb_listener.http_main
+  ]
 
   tags = {
     Name = "${var.app_name}-web-service"

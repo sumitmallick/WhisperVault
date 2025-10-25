@@ -21,7 +21,7 @@ resource "aws_db_instance" "main" {
   max_allocated_storage  = 100
   storage_type           = "gp2"
   engine                 = "postgres"
-  engine_version         = "15.4"
+  engine_version         = "15"
   instance_class         = var.db_instance_class
   db_name                = "whispervault"
   username               = "postgres"

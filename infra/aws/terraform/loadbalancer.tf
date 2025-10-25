@@ -163,8 +163,9 @@ resource "aws_lb_target_group" "web" {
   }
 }
 
-# HTTPS Load Balancer Listener with rules
+# HTTPS Load Balancer Listener with rules (only if certificate is provided)
 resource "aws_lb_listener" "https" {
+  count             = var.certificate_arn != "" ? 1 : 0
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
   protocol          = "HTTPS"
@@ -177,9 +178,23 @@ resource "aws_lb_listener" "https" {
   }
 }
 
-# API Listener Rule
-resource "aws_lb_listener_rule" "api" {
-  listener_arn = aws_lb_listener.https.arn
+# HTTP Load Balancer Listener (fallback when no SSL certificate)
+resource "aws_lb_listener" "http_main" {
+  count             = var.certificate_arn == "" ? 1 : 0
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
+}
+
+# API Listener Rule for HTTPS
+resource "aws_lb_listener_rule" "api_https" {
+  count        = var.certificate_arn != "" ? 1 : 0
+  listener_arn = aws_lb_listener.https[0].arn
   priority     = 100
 
   action {
@@ -194,19 +209,21 @@ resource "aws_lb_listener_rule" "api" {
   }
 }
 
-# HTTP to HTTPS Redirect
-resource "aws_lb_listener" "redirect" {
-  load_balancer_arn = aws_lb.main.arn
-  port              = "80"
-  protocol          = "HTTP"
+# API Listener Rule for HTTP (using path pattern)
+resource "aws_lb_listener_rule" "api_http" {
+  count        = var.certificate_arn == "" ? 1 : 0
+  listener_arn = aws_lb_listener.http_main[0].arn
+  priority     = 100
 
-  default_action {
-    type = "redirect"
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api.arn
+  }
 
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
+  condition {
+    path_pattern {
+      values = ["/api/*", "/auth/*"]
     }
   }
 }
+

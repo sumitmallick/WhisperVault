@@ -25,7 +25,7 @@ FROM python:3.11-slim AS production
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
-    PATH="/root/.local/bin:$PATH"
+    PATH="/usr/local/bin:$PATH"
 
 WORKDIR /app
 
@@ -34,8 +34,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python dependencies from builder stage
-COPY --from=builder /root/.local /root/.local
+# Copy Python dependencies from builder stage and install globally
+COPY --from=builder /root/.local /usr/local
 
 # Copy application code
 COPY app ./app
