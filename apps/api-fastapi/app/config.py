@@ -9,6 +9,7 @@ class Settings(BaseModel):
     redis_url: str | None = os.getenv("REDIS_URL")
     prefer_async_moderation: bool = os.getenv("PREFER_ASYNC_MODERATION", "true").lower() == "true"
     assets_dir: str = os.getenv("ASSETS_DIR", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "assets")))
+    secret_key: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 
 
 settings = Settings()

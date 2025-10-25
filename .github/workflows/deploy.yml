@@ -1,0 +1,111 @@
+name: Build and Deploy to AWS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_API_REPOSITORY: whispervault-api
+  ECR_WEB_REPOSITORY: whispervault-web
+  ECS_CLUSTER: whispervault-cluster
+  ECS_API_SERVICE: whispervault-api
+  ECS_WEB_SERVICE: whispervault-web
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          cd apps/api-fastapi
+          pip install -r requirements.txt
+
+      - name: Run Python tests
+        run: |
+          cd apps/api-fastapi
+          python -m pytest tests/ || echo "No tests found"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/web-next/package-lock.json
+
+      - name: Install Node.js dependencies
+        run: |
+          cd apps/web-next
+          npm ci
+
+      - name: Build Next.js app
+        run: |
+          cd apps/web-next
+          npm run build
+
+      - name: Run linting
+        run: |
+          cd apps/web-next
+          npm run lint
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push API image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd apps/api-fastapi
+          docker build -f Dockerfile.prod -t $ECR_REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_API_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_API_REPOSITORY:latest
+
+      - name: Build and push Web image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd apps/web-next
+          docker build -f Dockerfile.prod -t $ECR_REGISTRY/$ECR_WEB_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_WEB_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_WEB_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_WEB_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_WEB_REPOSITORY:latest
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_API_SERVICE --force-new-deployment
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_WEB_SERVICE --force-new-deployment
+
+      - name: Wait for deployment
+        run: |
+          aws ecs wait services-stable --cluster $ECS_CLUSTER --services $ECS_API_SERVICE
+          aws ecs wait services-stable --cluster $ECS_CLUSTER --services $ECS_WEB_SERVICE

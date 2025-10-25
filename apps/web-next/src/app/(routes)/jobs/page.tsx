@@ -1,151 +1,63 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button, Input } from "@/components/ui";
-import { useAuth } from "@/lib/auth";
-
-const API = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
-
-type PublishJob = {
-  id: number;
-  confession_id: number;
-  platforms_csv: string;
-  asset_path?: string | null;
-  status: string;
-  error?: string | null;
-  created_at: string;
-  updated_at: string;
-};
+import { useAuth } from '@/contexts/auth-context';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function JobsPage() {
-  const { user } = useAuth();
-  const [jobs, setJobs] = useState<PublishJob[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [jobId, setJobId] = useState<string>("");
-  const [selectedJob, setSelectedJob] = useState<PublishJob | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { user, signOut, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
 
-  const isAdmin = !!user && user.role === "admin";
-
-  async function loadRecent() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API}/publish/jobs?limit=20`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`List failed: ${res.status}`);
-      const data = await res.json();
-      setJobs(data);
-    } catch (e: any) {
-      setError(e.message ?? "Failed to load jobs");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (isAdmin) loadRecent();
-  }, [isAdmin]);
-
-  async function fetchJob() {
-    if (!jobId.trim()) return;
-    setLoading(true);
-    setError(null);
-    setSelectedJob(null);
-    try {
-      const res = await fetch(`${API}/publish/jobs/${jobId}`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-      const data = await res.json();
-      setSelectedJob(data);
-    } catch (e: any) {
-      setError(e.message ?? "Failed to fetch job");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (!isAdmin) {
+  if (isLoading) {
     return (
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">Publish jobs</h1>
-        <p className="text-sm text-zinc-400">You don't have access to this page.</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="mb-4">You need to be logged in to view this page.</p>
+          <Button onClick={() => router.push('/auth/sign-in')}>
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user.is_superuser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="mb-4">You need administrator privileges to view this page.</p>
+          <Button onClick={() => router.push('/')}>
+            Go Home
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Publish jobs</h1>
-
-      <div className="rounded-lg border border-zinc-800 p-4 space-y-3">
-        <div className="text-sm text-zinc-400">Lookup a job by ID</div>
-        <div className="flex gap-2">
-          <Input placeholder="Job ID" value={jobId} onChange={(e) => setJobId(e.target.value)} />
-          <Button onClick={fetchJob} disabled={loading || !jobId.trim()}>
-            {loading ? "Loading..." : "Fetch"}
-          </Button>
-        </div>
-        {error && <div className="text-sm text-red-400">{error}</div>}
-        {selectedJob && (
-          <div className="rounded-md border border-zinc-800 p-3">
-            <div className="text-sm text-zinc-400">Job #{selectedJob.id}</div>
-            <div className="text-sm">Confession: {selectedJob.confession_id}</div>
-            <div className="text-sm">Platforms: {selectedJob.platforms_csv}</div>
-            <div className="text-sm">
-              Status:{" "}
-              <span
-                className={
-                  selectedJob.status === "completed"
-                    ? "text-green-400"
-                    : selectedJob.status === "failed"
-                    ? "text-red-400"
-                    : "text-yellow-400"
-                }
-              >
-                {selectedJob.status}
-              </span>
-            </div>
-            {selectedJob.asset_path && (
-              <div className="text-sm truncate">Image: {selectedJob.asset_path}</div>
-            )}
-            {selectedJob.error && <div className="text-sm text-red-400">Error: {selectedJob.error}</div>}
-          </div>
-        )}
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold">Jobs Dashboard</h1>
+        <Button variant="outline" onClick={signOut}>
+          Sign Out
+        </Button>
       </div>
-
-      <div className="rounded-lg border border-zinc-800 p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-zinc-400">Recent jobs</div>
-          <Button className="bg-zinc-800 text-zinc-100 hover:bg-zinc-700" onClick={loadRecent} disabled={loading}>
-            Refresh
-          </Button>
-        </div>
-        <div className="space-y-3">
-          {jobs.length === 0 && <div className="text-sm text-zinc-400">No jobs yet.</div>}
-          {jobs.map((j) => (
-            <div key={j.id} className="rounded-md border border-zinc-800 p-3">
-              <div className="text-sm text-zinc-400">Job #{j.id}</div>
-              <div className="text-sm">Confession: {j.confession_id}</div>
-              <div className="text-sm">Platforms: {j.platforms_csv}</div>
-              <div className="text-sm">
-                Status:{" "}
-                <span
-                  className={
-                    j.status === "completed"
-                      ? "text-green-400"
-                      : j.status === "failed"
-                      ? "text-red-400"
-                      : "text-yellow-400"
-                  }
-                >
-                  {j.status}
-                </span>
-              </div>
-              {j.asset_path && <div className="text-sm truncate">Image: {j.asset_path}</div>}
-              {j.error && <div className="text-sm text-red-400">Error: {j.error}</div>}
-            </div>
-          ))}
-        </div>
+      
+      <div className="bg-white shadow rounded-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Welcome, {user.name}!</h2>
+        <p className="text-gray-600">
+          This is a protected page that only authenticated users can access.
+        </p>
       </div>
     </div>
   );
