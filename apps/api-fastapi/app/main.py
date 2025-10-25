@@ -37,7 +37,12 @@ def health():
     return {"ok": True}
 
 
-app.include_router(confessions_router)
-app.include_router(publish_router)
-app.include_router(auth_router)
-app.include_router(users_router)
+# API routes with /api prefix for load balancer routing
+@app.get("/api/health")
+def api_health():
+    return {"ok": True}
+
+app.include_router(confessions_router, prefix="/api")
+app.include_router(publish_router, prefix="/api")
+app.include_router(users_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
