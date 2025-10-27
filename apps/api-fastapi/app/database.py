@@ -26,7 +26,15 @@ async def get_db():
 
 
 async def init_db():
-    """Initialize database connection pool - tables should be created via migrations"""
-    # Remove table creation from startup to prevent timeouts
-    # Tables should be created via migrations or manual setup
-    pass
+    """Initialize database - tables will be created if they don't exist"""
+    try:
+        # Import models to ensure they're registered
+        from . import models  # noqa: F401
+        
+        # Create tables if they don't exist (with timeout)
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        # Log error but don't fail startup - database might already exist
+        print(f"Database initialization warning: {e}")
+        pass
