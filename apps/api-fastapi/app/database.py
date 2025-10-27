@@ -2,7 +2,20 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import declarative_base
 from .config import settings
 
-engine = create_async_engine(settings.database_url, echo=False, future=True)
+# Create engine with proper connection pooling and timeouts
+engine = create_async_engine(
+    settings.database_url,
+    echo=False,
+    future=True,
+    pool_size=5,
+    max_overflow=10,
+    pool_pre_ping=True,
+    pool_recycle=300,
+    connect_args={
+        "connect_timeout": 10,
+        "command_timeout": 10,
+    }
+)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 Base = declarative_base()
@@ -14,6 +27,7 @@ async def get_db():
 
 
 async def init_db():
-    from . import models  # noqa: F401 ensure models imported
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    """Initialize database connection pool - tables should be created via migrations"""
+    # Remove table creation from startup to prevent timeouts
+    # Tables should be created via migrations or manual setup
+    pass

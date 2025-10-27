@@ -24,7 +24,9 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def on_startup():
-    await init_db()
+    # Remove slow database table creation from startup
+    # Database connection pool will initialize on first use
+    pass
 
 
 @app.get("/")
