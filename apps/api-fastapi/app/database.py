@@ -12,7 +12,6 @@ engine = create_async_engine(
     pool_pre_ping=True,
     pool_recycle=300,
     connect_args={
-        "connect_timeout": 10,
         "command_timeout": 10,
     }
 )
