@@ -8,86 +8,100 @@ export default function AboutPage() {
   const { isAuthenticated } = useAuth();
 
   const skills = [
-    'JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Python',
-    'FastAPI', 'PostgreSQL', 'MongoDB', 'Docker', 'AWS', 'Git',
-    'Machine Learning', 'Data Analysis', 'System Design', 'Agile'
+    'Java', 'Python', 'JavaScript', 'TypeScript', 'Go', 'FastAPI', 'Flask', 
+    'Spring Boot', 'Node.js', 'NestJS', 'React', 'Next.js', 'AWS', 'EKS', 
+    'EC2', 'Lambda', 'S3', 'DynamoDB', 'Terraform', 'Ansible', 'Docker', 
+    'Kubernetes', 'Serverless', 'Airflow', 'Databricks', 'Snowflake', 'Kafka', 
+    'Redis', 'PostgreSQL', 'MongoDB', 'Prometheus', 'Grafana', 'ELK', 'Datadog'
   ];
 
   const experiences = [
     {
-      title: 'Senior Software Engineer',
-      company: 'Tech Company',
-      duration: 'Jan 2022 - Present',
-      location: 'Remote',
+      title: 'Software Development Engineer III',
+      company: 'Hypersonix.ai',
+      duration: 'May 2024 – Present',
+      location: 'Bengaluru',
       description: [
-        'Led development of scalable web applications using React and Node.js',
-        'Architected microservices infrastructure reducing response time by 40%',
-        'Mentored junior developers and conducted code reviews',
-        'Implemented CI/CD pipelines improving deployment efficiency'
+        'Spearheaded backend design for ProfitGPT, an LLM-based intelligence agent integrating multi-cloud data pipelines across AWS, Snowflake, and Databricks',
+        'Built a distributed data orchestration framework using Airflow, async Python jobs, DynamoDB, AWS Lambda and event streaming—reducing job execution latency by 40%',
+        'Designed self-healing observability dashboards with React, MLflow, and TypeScript APIs, improving RCA resolution speed by 30%',
+        'Defined and deployed IaC automation using Terraform and Serverless—cutting provisioning overhead by 60%'
       ]
     },
     {
-      title: 'Full Stack Developer',
-      company: 'Startup Inc.',
-      duration: 'Mar 2020 - Dec 2021',
-      location: 'San Francisco, CA',
+      title: 'Software Development Engineer II',
+      company: 'ShopSe',
+      duration: 'Sep 2022 – May 2024',
+      location: 'Bengaluru',
       description: [
-        'Built end-to-end web applications with modern JavaScript frameworks',
-        'Developed RESTful APIs and integrated third-party services',
-        'Optimized database queries resulting in 50% performance improvement',
-        'Collaborated with design team to implement responsive UI/UX'
+        'Architected distributed, event-driven microservices with Java Spring Boot and Python Flask, driving a 30% boost in concurrent transactions while sustaining 99.9% uptime',
+        'Built Kafka-based event streaming for payments and risk engines, enabling asynchronous workflows for transaction validation, reconciliation, and notifications',
+        'Integrated major BaaS connectors (Apple Pay, Vivo, MSI, Oppo) to onboard over 1 million active users and reduce partner API latency by 25%',
+        'Enhanced the DevOps pipeline by migrating from Jenkins to GitHub Actions with parallel DAG workflows, achieving 40% faster deployment velocity'
       ]
     },
     {
-      title: 'Software Developer',
-      company: 'Innovation Labs',
-      duration: 'Jun 2018 - Feb 2020',
-      location: 'New York, NY',
+      title: 'Software Development Engineer II',
+      company: 'Avataar.ai',
+      duration: 'Jun 2020 – Sep 2022',
+      location: 'Bengaluru',
       description: [
-        'Developed and maintained multiple client applications',
-        'Implemented automated testing reducing bugs by 30%',
-        'Participated in agile development processes',
-        'Created technical documentation and user guides'
+        'Delivered large-scale backend APIs supporting AR/VR experiences, 3D asset streaming, and payments using Node.js, Python Flask, and AWS Lambda + EC2 clustering',
+        'Refactored legacy sync workflows into async event queues with Kafka + Celery, boosting throughput by 50% while maintaining transactional integrity',
+        'Optimized MySQL and MongoDB query indexes across cluster nodes, delivering a 22% reduction in response times',
+        'Implemented multi-region failover architecture using Terraform and Route 53 failover policies, improving SLA from 79.7% to 97.9%'
+      ]
+    },
+    {
+      title: 'Software Development Engineer I',
+      company: 'Embibe',
+      duration: 'Jul 2019 – Jun 2020',
+      location: 'Mumbai',
+      description: [
+        'Built REST and batch processing APIs in Spring Boot and Flask supporting 10M+ learning events for adaptive education platforms',
+        'Designed automated ECS/Jenkins CI/CD pipelines, AWS S3 + Lambda triggers with rollout canaries and automated rollback logic, cutting deployment time by 30%',
+        'Implemented request queuing, local cache pipelines, and database denormalization, improving query throughput by 18% across API clusters'
       ]
     }
   ];
 
   const education = [
     {
-      degree: 'Master of Science in Computer Science',
-      institution: 'University Name',
-      duration: '2016 - 2018',
-      description: 'Specialized in Machine Learning and Data Science'
-    },
-    {
-      degree: 'Bachelor of Technology in Computer Engineering',
-      institution: 'Engineering College',
-      duration: '2012 - 2016',
-      description: 'Graduated with First Class Honors'
+      degree: 'B.Tech. in Computer Science & Engineering',
+      institution: 'Lovely Professional University',
+      duration: '2015 - 2019',
+      description: 'Focus: Data Structures, OS, Cloud Computing, Distributed Systems'
     }
   ];
 
   const projects = [
     {
       name: 'WhisperVault',
-      description: 'Anonymous confession sharing platform with JWT authentication and moderation system',
-      technologies: ['Next.js', 'FastAPI', 'PostgreSQL', 'Docker'],
+      description: 'Anonymous confession sharing platform with JWT authentication, moderation system, and real-time updates built with modern cloud architecture',
+      technologies: ['Next.js', 'FastAPI', 'PostgreSQL', 'Docker', 'AWS ECS', 'Terraform'],
       github: 'https://github.com/sumitmallick/WhisperVault',
+      live: 'https://whispervault.in'
+    },
+    {
+      name: 'Sayvero.com',
+      description: 'Enterprise-grade communication and collaboration platform with advanced analytics and real-time messaging capabilities',
+      technologies: ['React', 'Node.js', 'Python', 'AWS', 'Microservices'],
+      github: null,
+      live: 'https://sayvero.com'
+    },
+    {
+      name: 'Loch.one',
+      description: 'Innovative data analytics and visualization platform with AI-powered insights and multi-cloud integration',
+      technologies: ['Python', 'FastAPI', 'React', 'AWS', 'Machine Learning'],
+      github: null,
+      live: 'https://loch.one'
+    },
+    {
+      name: 'ProfitGPT (Hypersonix.ai)',
+      description: 'LLM-based intelligence agent with multi-cloud data pipelines serving enterprise clients like Amazon and Coupang',
+      technologies: ['Python', 'AWS', 'Snowflake', 'Databricks', 'Airflow', 'MLflow'],
+      github: null,
       live: null
-    },
-    {
-      name: 'E-Commerce Platform',
-      description: 'Full-stack e-commerce solution with payment integration and admin dashboard',
-      technologies: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-      github: '#',
-      live: '#'
-    },
-    {
-      name: 'Data Analytics Dashboard',
-      description: 'Real-time analytics dashboard with interactive visualizations',
-      technologies: ['Python', 'Django', 'D3.js', 'PostgreSQL'],
-      github: '#',
-      live: '#'
     }
   ];
 
@@ -110,14 +124,17 @@ export default function AboutPage() {
                 Sumit Kumar Mallick
               </h1>
               <p className="text-xl text-gray-600 mb-4">
-                Senior Software Engineer & Full Stack Developer
+                Senior Backend Engineer & Platform Architecture Specialist
               </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-500 mb-6">
                 <div className="flex items-center">
-                  📍 Location
+                  📍 Bengaluru, KA, India
                 </div>
                 <div className="flex items-center">
                   🗓️ 5+ Years Experience
+                </div>
+                <div className="flex items-center">
+                  📞 7063760250
                 </div>
               </div>
 
@@ -140,7 +157,7 @@ export default function AboutPage() {
                   GitHub
                 </a>
                 <a
-                  href="mailto:contact@sumitkumar.dev"
+                  href="mailto:mallicksumit546@gmail.com"
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
                 >
                   Email
@@ -154,15 +171,13 @@ export default function AboutPage() {
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">About Me</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            Passionate Full Stack Developer with 5+ years of experience building scalable web applications 
-            and leading development teams. I specialize in modern JavaScript frameworks, backend API development, 
-            and cloud infrastructure. My expertise spans from frontend user experience to backend architecture 
-            and database optimization.
+            Senior Backend Engineer with 5+ years of experience designing <strong>scalable data systems, developer platforms, and AI-integrated backends</strong> across fintech, e-commerce, and B2B analytics. Expert in <strong>Distributed Systems (REST API, gRPC)</strong> with <strong>Java (Spring)</strong> and <strong>Python (FastAPI, Flask)</strong> with production experience on <strong>AWS</strong>.
+          </p>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            Adept at building <strong>fault-tolerant microservices</strong>, <strong>data-driven automation</strong>, and <strong>observability frameworks</strong> serving billions of events daily. Skilled in infrastructure design using <strong>Kubernetes</strong>, <strong>Terraform</strong>, and <strong>Ansible</strong> with a strong grasp of distributed system fundamentals, performance optimization, and API scalability.
           </p>
           <p className="text-gray-700 leading-relaxed">
-            I'm dedicated to writing clean, maintainable code and staying current with emerging technologies. 
-            I enjoy solving complex problems, mentoring fellow developers, and contributing to open-source projects. 
-            Currently focused on building innovative solutions that make a positive impact.
+            Currently working on cutting-edge LLM-based intelligence agents and multi-cloud data orchestration platforms. Passionate about building systems that can scale and make a meaningful impact. Notable projects include <strong>WhisperVault</strong>, <strong>Sayvero.com</strong>, and <strong>Loch.one</strong>.
           </p>
         </div>
 
@@ -283,7 +298,7 @@ export default function AboutPage() {
             <p className="text-gray-600 mb-4">
               Have a project in mind? Want to collaborate? Or just want to say hello? I'd love to hear from you!
             </p>
-            <form className="space-y-4" action="mailto:contact@sumitkumar.dev" method="post" encType="text/plain">
+            <form className="space-y-4" action="mailto:mallicksumit546@gmail.com" method="post" encType="text/plain">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -343,7 +358,7 @@ export default function AboutPage() {
                   Send Message 📨
                 </Button>
                 <Button type="button" variant="outline" asChild className="flex-1">
-                  <a href="mailto:contact@sumitkumar.dev">
+                  <a href="mailto:mallicksumit546@gmail.com">
                     Quick Email 💬
                   </a>
                 </Button>
@@ -364,7 +379,7 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
               <Button asChild className="bg-yellow-500 hover:bg-yellow-600 text-white">
                 <a 
-                  href="https://www.buymeacoffee.com/sumitkumar" 
+                  href="https://buymeacoffee.com/mallicksumb" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center justify-center"
@@ -426,13 +441,13 @@ export default function AboutPage() {
                 <span className="text-sm font-medium text-gray-700">GitHub</span>
               </a>
               <a
-                href="https://twitter.com/iamskmallick"
+                href="https://x.com/iamskmallick"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-col items-center p-4 bg-sky-50 rounded-lg hover:bg-sky-100 transition-colors"
               >
-                <div className="text-2xl mb-2">🐦</div>
-                <span className="text-sm font-medium text-sky-700">Twitter</span>
+                <div className="text-2xl mb-2">𝕏</div>
+                <span className="text-sm font-medium text-sky-700">X (Twitter)</span>
               </a>
               <a
                 href="mailto:mallicksumit546@gmail.com"
